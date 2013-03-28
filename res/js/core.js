@@ -1,3 +1,8 @@
+// core.js | ToDo List core
+// language : English (en_US)
+// company : aLabs di Mattia Accornero (http://www.alabs.it)
+// author : Mattia Accornero (https://github.com/beat84)
+
 var todo = {
 	debug : false,
 	lang : "en"
@@ -20,10 +25,8 @@ todo.init = function(id, element){
 
 todo.list = function(type){
 	if(type=="complete"){
-		//bb.popScreen();
 		bb.pushScreen('complete.htm', 'complete');
 	}else if(type=="uncomplete"){
-		//bb.popScreen();
 		bb.pushScreen('uncomplete.htm', 'uncomplete');
 	}
 	return true;
@@ -39,7 +42,6 @@ todo.add = function(value){
 	if(typeof(value)=="undefined" || value==""){
 		return false;
 	}
-	//add value
 	this.db.isFirstLaunch = false;
 	this.db.insert_data(value);
 	
@@ -70,17 +72,15 @@ todo.db.start = function(){
 		this.open();
 
 		if(!this.link){
-			//console.log("UD : Failed to open the database on disk. This is probably because the version was bad or there is not enough space left in this domain's quota");
 			blackberry.app.exit();
 		}
 
-		// Load data from the database.
 		var database = this.link;
 		var _self = this;
 		if(!this.isFirstLaunch){
 			database.transaction(function(tx) {
 				_self.parent.create_list(tx);
-			}, function(/*SQLError*/ error){
+			}, function(error){
 				todo.db.init(database);
 			});
 		}
@@ -99,12 +99,10 @@ todo.db.start = function(){
 todo.db.init = function(database){
 	this.isFirstLaunch = true;
 	var _self = this;
-	database.transaction(_self.create, function(/*SQLException*/ e){
+	database.transaction(_self.create, function(e){
 		if(--this.lives > 0){
-			//console.log(e.message + "\n" + this.lives + " attempts remaining.");
 			_self.init(database);
 		}else{
-			//console.log(e.message + "\nIssues with DB initialization.");
 			blackberry.app.exit();
 		}
 	});
@@ -113,8 +111,7 @@ todo.db.init = function(database){
 
 
 todo.db.create = function(tx){
-	//id	add_date	task	status[0=uncomplete,1=completed]
-	tx.executeSql("CREATE TABLE tbl_list(id INTEGER PRIMARY KEY ASC, add_date DATETIME, task TEXT, status INTEGER)", null, null); //todo.db.callback, sqlFail);
+	tx.executeSql("CREATE TABLE tbl_list(id INTEGER PRIMARY KEY ASC, add_date DATETIME, task TEXT, status INTEGER)", null, null);
 	this.isFirstLaunch = false;
 	return true;
 }
@@ -125,7 +122,6 @@ todo.db.open = function(){
 	}
 	
 	if (!window.openDatabase) {
-		//console.log("No DB compatibility.");
 		return false;
 	}
 
@@ -134,7 +130,6 @@ todo.db.open = function(){
 		return true;
 	}
 	catch(e){
-		//console.log("DB issues");
 		return false;
 	}
 }
