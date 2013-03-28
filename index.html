@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="x-blackberry-defaultHoverEffect" content="false" />
+	<title>ToDo List</title>
+	<link  rel="stylesheet" href="res/css/bbui.css" type="text/css" />
+	<link rel="stylesheet" href="res/css/style.css" type="text/css" />
+	<script src="res/js/core.js" type="text/javascript"></script>
+	<script src="res/js/bbui.js" type="text/javascript"></script>
+	<script src="local:///chrome/webworks.js" type="text/javascript"></script>
+	<script type="text/javascript">
+		document.addEventListener('webworksready', function(e) {
+			bb.init({
+				actionBarDark: true,
+				controlsDark: false,
+				listsDark: false,
+				bb10ForPlayBook: true,
+				onscreenready: function(element, id){
+					console.log("execute");
+					todo.init(id, element);
+				}
+			});
+			console.log("load page");
+			bb.pushScreen('uncomplete.htm', 'uncomplete');
+			console.log("loaded page");
+		}, false);
+	</script>
+</head>
+<body>
+
+</body>
+</html>
