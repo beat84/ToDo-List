@@ -1,17 +1,9 @@
-<div data-bb-type="screen" data-bb-effect="fade">
+<div data-bb-type="screen" data-bb-effect="slide-left">
 	<div data-bb-type="round-panel"> 
-		<div data-bb-type="panel-header">What do you want to do?</div>
-		<div data-bb-type="label-control-container">
-			<div data-bb-type="row">
-				<div data-bb-type="label">Complete task</div>
-			   <div data-bb-type="button" data-bb-style="stretch" onclick="todo.complete();">Complete task</div>
-		   </div>
-		   <div data-bb-type="row">
-		   	   <div data-bb-type="label">Delete task</div>
-		   	   <div data-bb-type="button" data-bb-style="stretch" onclick="todo.remove();">Delete task</div>
-		   </div>
-		</div>
+		<div data-bb-type="panel-header" data-lang="what_to_do" id="subtitle"></div>
+		<div data-bb-type="button" data-bb-style="stretch" onclick="todo.complete();" data-lang="complete_task" id="btn_do_complete"></div>
+		<div data-bb-type="button" data-bb-style="stretch" onclick="todo.remove();" data-lang="delete_task" id="btn_do_delete"></div>
 	</div>
-	<div data-bb-type="action-bar" data-bb-back-caption="Back"></div>
+	<div data-bb-type="action-bar" data-bb-back-caption="" data-lang="back" id="btn_back"></div>
 </div>
 	

@@ -1,19 +1,19 @@
-<div data-bb-type="screen" data-bb-effect="fade">
-	<div data-bb-type="image-list" data-bb-images="none" data-bb-style="arrowlist" data-bb-header-justify="left" id="uncomplete">
-		<div data-bb-type="header">Uncomplete tasks</div>
-	</div>
+<div data-bb-type="screen" data-bb-effect="none">
+	<div data-bb-type="title" data-bb-caption="" data-lang="uncomplete_tasks" id="title"></div>
+	
+	<div data-bb-type="image-list" data-bb-images="none" data-bb-style="arrowlist" data-bb-header-justify="left" id="uncomplete"></div>
 	<div data-bb-type="round-panel" id="add"> 
-		<div data-bb-type="panel-header">Add a new item</div>
+		<div data-bb-type="panel-header" data-lang="add_new_item" id="subtitle"></div>
 		<table width="100%;">
 			<tr>
-				<td style="padding-left:20px;width:70%;"><input id="caption" type="text" placeholder="Enter new item"/></td>
-				<td><div data-bb-type="button" data-bb-style="stretch" onclick="todo.add(document.getElementById('caption').value); document.getElementById('caption').value = '';">Add</div></td>
+				<td style="padding-left:20px;width:70%;"><input id="caption" type="text" placeholder="" data-lang="enter_new_item" style="font-style: italic;" /></td>
+				<td><div id="btn_add_task" data-bb-type="button" data-bb-style="stretch" onclick="todo.add(document.getElementById('caption').value); document.getElementById('caption').value = '';" data-lang="add"></div></td>
 			</tr>
 		</table>
 	</div>
 	<div data-bb-type="action-bar">
-		<div data-bb-type="action" data-bb-style="tab" data-bb-selected="true" data-bb-img="res/img/ic_unselect.png" onclick="todo.list('uncomplete');" id="ab_uncomplete">Uncomplete</div>
-		<div data-bb-type="action" data-bb-style="tab" data-bb-img="res/img/ic_select.png" onclick="todo.list('complete');">Complete</div>
+		<div data-bb-type="action" data-bb-style="tab" data-bb-selected="true" data-bb-img="res/img/ic_unselect.png" onclick="todo.list('uncomplete');" data-lang="uncomplete" id="btn_uncomplete"></div>
+		<div data-bb-type="action" data-bb-style="tab" data-bb-img="res/img/ic_select.png" onclick="todo.list('complete');" data-lang="complete" id="btn_complete"></div>
 	</div>
 </div>
 	

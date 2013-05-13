@@ -5,7 +5,8 @@
 
 var todo = {
 	debug : false,
-	lang : "en"
+	lang : "en",
+	available_lang : ["en", "it", "es", "de"]
 }
 
 todo.isDad = function(child){
@@ -20,6 +21,45 @@ todo.init = function(id, element){
 	if(id!="detail"){
 		this.db.start();
 	}
+	for(var i=0; i<this.available_lang.length; i++){
+		if(this.available_lang[i]==blackberry.system.language.substr(0, 2)){
+			this.lang = blackberry.system.language.substr(0,2);
+			break;
+		}
+	}
+	/*if(this.who=="complete"){
+		this.element.getElementById("title").setAttribute("data-bb-action-caption", this.get_dict("clean"));
+	}*/
+	return true;
+}
+
+todo.get_dict = function(word){
+	return eval("languages."+this.lang+"."+word);
+}
+
+todo.set_language = function(){
+	var elems = ["title", "btn_uncomplete", "btn_complete", "btn_add_task", "btn_do_complete", "btn_do_delete"];
+	for(var i=0; i<elems.length; i++) {
+		var obj = document.getElementById(elems[i]);
+		if(obj!=null){
+			var txt = this.get_dict(obj.getAttribute("data-lang"));
+			obj.setCaption(txt);
+		}
+	}
+	
+	var elem = document.getElementById("subtitle");
+	if(elem!=null){
+		elem.innerText = this.get_dict(elem.getAttribute("data-lang"));
+	}
+	var elem = document.getElementById("caption");
+	if(elem!=null){
+		elem.setAttribute("placeholder", this.get_dict(elem.getAttribute("data-lang")));
+	}
+	var elem = document.getElementById("btn_back");
+	if(elem!=null){
+		elem.setBackCaption(this.get_dict(elem.getAttribute("data-lang")));
+	}
+
 	return true;
 }
 
@@ -35,6 +75,7 @@ todo.list = function(type){
 todo.managing = function(id){
 	this.working_task = id;
 	bb.pushScreen('detail.htm', 'detail');
+	this.set_language();
 	return true;
 }
 
@@ -62,6 +103,24 @@ todo.remove = function(){
 	return true;
 }
 
+todo.clean = function(){	
+	try {
+		blackberry.ui.dialog.standardAskAsync(todo.get_dict("cleaning_popup_text"), blackberry.ui.dialog.D_DELETE, todo.clean_cb, {title : todo.get_dict("cleaning_popup_title")});
+	}catch (e) {
+		alert("Exception in standardDialog: " + e);
+	}
+	return true;
+}
+
+todo.clean_cb = function(selection){
+	// onactionclick="todo.clean();"
+	if(selection==0){
+		todo.db.remove_completed();
+		bb.pushScreen('uncomplete.htm', 'uncomplete');
+	}
+	return true;
+}
+
 todo.db = {
 	lives: 2,
 	isFirstLaunch: false
@@ -77,20 +136,19 @@ todo.db.start = function(){
 
 		var database = this.link;
 		var _self = this;
-		if(!this.isFirstLaunch){
-			database.transaction(function(tx) {
-				_self.parent.create_list(tx);
-			}, function(error){
-				todo.db.init(database);
-			});
-		}
+		
+		database.transaction(function(tx) {
+			_self.parent.create_list(tx);
+		}, function(error){
+			todo.db.init(database);
+		});
 
 	} catch(ex) {
 		if(ex == 2){
 			// Version number mismatch.
-			//console.log("Invalid database version.");
+			console.log("Invalid database version.");
 		}else{
-			//console.log("Unknown error "+ex+".");
+			console.log("Unknown error "+ex+".");
 		}
 		//blackberry.app.exit();
 	}
@@ -143,7 +201,8 @@ todo.db.insert_data = function(task){
 		tx.executeSql("INSERT INTO tbl_list (add_date, task, status) VALUES (\""+date+"\", \""+task+"\", "+0+")");
 		_self.parent.list("uncomplete");
 	}, function(e){
-		//console.log("Issue with insert into DB - "+e);
+		//console.log("Issue with insert into DB - ");
+		//console.log(e);
 	});
 }
 
@@ -165,10 +224,23 @@ todo.db.remove_data = function(id){
 	});
 }
 
+todo.db.remove_completed = function(){
+	var database = this.link;
+	database.transaction(function(tx){
+		tx.executeSql("DELETE FROM tbl_list WHERE status=1");
+	}, function(e){
+		//console.log("Issue with removing data from DB - "+e);
+	});
+}
+
 todo.db.load_data = function(tx, who){
 	var _self = this;
 	tx.executeSql("SELECT * FROM tbl_list WHERE status="+who, null, function(tx, rs){
 		_self.parent.append_data(tx, rs);
+	}, function(e){
+		//console.log("No possible to get data from DB - Init DB");
+		//console.log(e);
+		_self.init();
 	});
 	return true;
 }
@@ -183,7 +255,12 @@ todo.convert_status = function(who){
 }
 
 todo.create_list = function(tx){
-	this.db.load_data(tx, this.convert_status(this.who));
+	try{
+		this.db.load_data(tx, this.convert_status(this.who));
+	}
+	catch(e){
+		return false;
+	}
 }
 
 todo.append_data = function(tx, rs){
@@ -214,6 +291,9 @@ todo.append_data = function(tx, rs){
 		}
 		item.setAttribute("data-bb-img", this.who+".png");
 		el.getElementById(this.who).appendItem(item);
+/*		tb = el.getElementById("title");
+		tb.setAttribute("data-bb-action-caption", this.get_dict("clean"));*/
+		
 	}
 	
 }
